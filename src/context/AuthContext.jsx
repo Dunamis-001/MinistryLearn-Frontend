@@ -31,11 +31,23 @@ export function AuthProvider({ children }) {
   }
 
   async function loadProfile() {
+    const token = localStorage.getItem('access')
+    if (!token) {
+      setUser(null)
+      setRoles([])
+      return
+    }
+
     try {
       const res = await api.get('/auth/profile')
       setUser(res.data)
       setRoles(res.data.roles || [])
     } catch (error) {
+      // If unauthorized, clear tokens and stop retrying
+      if (error.response?.status === 401) {
+        localStorage.removeItem('access')
+        localStorage.removeItem('refresh')
+      }
       setUser(null)
       setRoles([])
     }

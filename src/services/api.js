@@ -36,14 +36,16 @@ api.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
           return api(originalRequest)
         } catch (refreshError) {
-          // Refresh failed, redirect to login
+          // Refresh failed, clear tokens but don't redirect automatically
           localStorage.removeItem('access')
           localStorage.removeItem('refresh')
-          window.location.href = '/login'
+          return Promise.reject(error)
         }
       } else {
-        // No refresh token, redirect to login
-        window.location.href = '/login'
+        // No refresh token, clear tokens but don't redirect automatically
+        localStorage.removeItem('access')
+        localStorage.removeItem('refresh')
+        return Promise.reject(error)
       }
     }
 
