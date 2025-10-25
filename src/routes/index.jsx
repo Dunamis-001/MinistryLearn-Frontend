@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Landing from '../pages/Landing'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
@@ -14,78 +14,78 @@ import Profile from '../pages/Profile'
 import Settings from '../pages/Settings'
 import { PrivateRoute } from './PrivateRoute'
 
-const router = createBrowserRouter([
-  { path: '/', element: <Landing /> },
-  { path: '/login', element: <Login /> },
-  { path: '/register', element: <Register /> },
-  { 
-    path: '/dashboard', 
-    element: (
-      <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
-        <DashboardLearner />
-      </PrivateRoute>
-    ) 
-  },
-  { 
-    path: '/instructor', 
-    element: (
-      <PrivateRoute roles={['Instructor', 'Admin']}>
-        <DashboardInstructor />
-      </PrivateRoute>
-    ) 
-  },
-  { 
-    path: '/admin', 
-    element: (
-      <PrivateRoute roles={['Admin']}>
-        <DashboardAdmin />
-      </PrivateRoute>
-    ) 
-  },
-  { path: '/catalog', element: <Catalog /> },
-  { path: '/courses/:courseId', element: <CourseDetail /> },
-  { 
-    path: '/learn/:courseId', 
-    element: (
-      <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
-        <Learn />
-      </PrivateRoute>
-    ) 
-  },
-  { 
-    path: '/assessments/:assessmentId', 
-    element: (
-      <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
-        <AssessmentAttempt />
-      </PrivateRoute>
-    ) 
-  },
-  { 
-    path: '/certifications', 
-    element: (
-      <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
-        <Certifications />
-      </PrivateRoute>
-    ) 
-  },
-  { 
-    path: '/profile', 
-    element: (
-      <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
-        <Profile />
-      </PrivateRoute>
-    ) 
-  },
-  { 
-    path: '/settings', 
-    element: (
-      <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
-        <Settings />
-      </PrivateRoute>
-    ) 
-  }
-])
-
 export default function AppRoutes() {
-  return <RouterProvider router={router} />
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route 
+        path="/dashboard" 
+        element={
+          <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
+            <DashboardLearner />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/instructor" 
+        element={
+          <PrivateRoute roles={['Instructor', 'Admin']}>
+            <DashboardInstructor />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/admin" 
+        element={
+          <PrivateRoute roles={['Admin']}>
+            <DashboardAdmin />
+          </PrivateRoute>
+        } 
+      />
+      <Route path="/catalog" element={<Catalog />} />
+      <Route path="/courses/:courseId" element={<CourseDetail />} />
+      <Route 
+        path="/learn/:courseId" 
+        element={
+          <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
+            <Learn />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/assessments/:assessmentId" 
+        element={
+          <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
+            <AssessmentAttempt />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/certifications" 
+        element={
+          <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
+            <Certifications />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/profile" 
+        element={
+          <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
+            <Profile />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <PrivateRoute roles={['Learner', 'Instructor', 'Admin']}>
+            <Settings />
+          </PrivateRoute>
+        } 
+      />
+    </Routes>
+  )
 }

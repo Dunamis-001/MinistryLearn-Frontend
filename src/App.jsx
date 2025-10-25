@@ -6,16 +6,16 @@ import './styles/globals.css'
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <div className="min-h-screen bg-gray-50">
           <Header />
           <main>
             <AppRoutes />
           </main>
         </div>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 
