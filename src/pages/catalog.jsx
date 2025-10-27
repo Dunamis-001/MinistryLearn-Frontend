@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../services/api'
-
+import CourseCard from '../components/CourseCard'
 
 export default function Catalog() {
   const [courses, setCourses] = useState([])
@@ -13,11 +13,9 @@ export default function Catalog() {
     search: ''
   })
 
-
   useEffect(() => {
     loadCourses()
   }, [filters])
-
 
   const loadCourses = async () => {
     try {
@@ -26,7 +24,6 @@ export default function Catalog() {
       if (filters.category) params.append('category', filters.category)
       if (filters.difficulty) params.append('difficulty', filters.difficulty)
       if (filters.search) params.append('search', filters.search)
-
 
       const response = await api.get(`/courses?${params.toString()}`)
       setCourses(response.data.items || [])
@@ -37,11 +34,9 @@ export default function Catalog() {
     }
   }
 
-
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }))
   }
-
 
   if (loading) {
     return (
@@ -51,14 +46,12 @@ export default function Catalog() {
     )
   }
 
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Course Catalog</h1>
         <p className="text-gray-600 mt-2">Browse and enroll in courses</p>
       </div>
-
 
       {/* Filters */}
       <div className="card mb-8">
@@ -117,7 +110,6 @@ export default function Catalog() {
         </div>
       </div>
 
-
       {/* Courses Grid */}
       {courses.length === 0 ? (
         <div className="text-center py-12">
@@ -130,37 +122,7 @@ export default function Catalog() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course) => (
-            <div key={course.id} className="card hover:shadow-lg transition-shadow">
-              <div className="card-body">
-                {course.thumbnail_url && (
-                  <img
-                    src={course.thumbnail_url}
-                    alt={course.title}
-                    className="w-full h-48 object-cover rounded-md mb-4"
-                  />
-                )}
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{course.title}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">{course.description}</p>
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    course.difficulty === 'Beginner'
-                      ? 'bg-green-100 text-green-800'
-                      : course.difficulty === 'Intermediate'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {course.difficulty}
-                  </span>
-                  <span className="text-sm text-gray-500">{course.campus}</span>
-                </div>
-                <Link
-                  to={`/courses/${course.id}`}
-                  className="btn-primary w-full text-center"
-                >
-                  View Details
-                </Link>
-              </div>
-            </div>
+            <CourseCard key={course.id} course={course} />
           ))}
         </div>
       )}
