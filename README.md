@@ -257,7 +257,7 @@ This project is licensed under the MIT License.
 
 - **Repository**: [MinistryLearn-Frontend](https://github.com/Dunamis-001/MinistryLearn-Frontend)
 - **Backend API**: [MinistryLearn-Backend](https://github.com/Dunamis-001/MinistryLearn-Backend)
-- **Live Demo**: [Coming Soon]
+- **Live Demo**: https://dainty-treacle-31643e.netlify.app/
 
 ## 🆘 Support
 
