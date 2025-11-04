@@ -2,7 +2,7 @@
 
 A comprehensive Learning Management System (LMS) designed for ministry and educational organizations. Built with modern web technologies, it provides a complete solution for course management, user authentication, assessments, and learning tracking.
 
-## 🌟 Features
+## Features
 
 ### Core Functionality
 - **User Authentication & Authorization** - JWT-based auth with role management
@@ -19,7 +19,7 @@ A comprehensive Learning Management System (LMS) designed for ministry and educa
 - **Instructor** - Course creation and management
 - **Learner** - Access to enrolled courses
 
-## 🏗️ Architecture
+## Architecture
 
 The platform consists of two main components:
 
@@ -38,7 +38,7 @@ The platform consists of two main components:
 - **State Management**: React Context
 - **HTTP Client**: Axios
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.8+ (for backend)
@@ -136,7 +136,7 @@ CORS_ORIGINS=http://localhost:5173,http://your-frontend-ip:5173
 VITE_API_URL=http://localhost:5000/api
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 Once the backend is running, access the interactive API documentation:
 - **Swagger UI**: `http://127.0.0.1:5000/docs/`
@@ -158,7 +158,7 @@ Once the backend is running, access the interactive API documentation:
 3. Set environment variables
 4. Deploy
 
-## 🧪 Testing
+## Testing
 
 ### Backend Tests
 ```bash
@@ -172,7 +172,7 @@ cd MinistryLearn-Frontend
 npm run test
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 MinistryLearn/
@@ -196,7 +196,7 @@ MinistryLearn/
     └── vite.config.js       # Vite configuration
 ```
 
-## 🔒 Security Features
+## Security Features
 
 - JWT-based authentication
 - Password hashing with bcrypt
@@ -205,7 +205,7 @@ MinistryLearn/
 - SQL injection protection
 - Environment variable protection
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -224,7 +224,7 @@ This project is licensed under the MIT License.
 - **Backend deployed on Render**: https://ministrylearn-backend-2.onrender.com
 - **Frontend deployed on Netlify**: https://dainty-treacle-31643e.netlify.app/
 
-## 🆘 Support
+## Support
 
 For support and questions:
 1. Check the Issues section in respective repositories
@@ -245,7 +245,7 @@ For support and questions:
 - ✅ Cloud database integration
 - ✅ Production-ready deployment
 
-## 🎯 Roadmap
+## Roadmap
 
 ### Upcoming Features
 - [ ] Real-time notifications
