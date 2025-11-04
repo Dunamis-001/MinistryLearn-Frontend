@@ -142,7 +142,7 @@ Once the backend is running, access the interactive API documentation:
 - **Swagger UI**: `http://127.0.0.1:5000/docs/`
 - **Health Check**: `http://127.0.0.1:5000/health/`
 
-## 🚀 Deployment
+## Deployment
 
 ### Backend Deployment (Render)
 
@@ -213,11 +213,11 @@ MinistryLearn/
 4. Add tests
 5. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 🔗 Links
+## Links
 
 - **Backend Repository**: [MinistryLearn-Backend](https://github.com/Dunamis-001/MinistryLearn-Backend)
 - **Frontend Repository**: [MinistryLearn-Frontend](https://github.com/Dunamis-001/MinistryLearn-Frontend)
@@ -231,7 +231,7 @@ For support and questions:
 2. Create a new issue with detailed information
 3. Contact the development team
 
-## 📝 Changelog
+## Changelog
 
 ### v1.0.0 (Current)
 - ✅ User registration and authentication
