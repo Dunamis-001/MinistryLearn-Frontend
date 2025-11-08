@@ -12,9 +12,15 @@ export default function ThemeToggle() {
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark')
+      if (document.body) {
+        document.body.classList.add('dark')
+      }
       localStorage.setItem('darkMode', 'true')
     } else {
       document.documentElement.classList.remove('dark')
+      if (document.body) {
+        document.body.classList.remove('dark')
+      }
       localStorage.setItem('darkMode', 'false')
     }
   }, [isDark])

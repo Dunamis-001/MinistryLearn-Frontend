@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../services/api'
 import CourseCard from '../components/CourseCard'
 
 export default function Catalog() {
+  const [searchParams] = useSearchParams()
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
-    campus: '',
-    category: '',
-    difficulty: '',
-    search: ''
+    campus: searchParams.get('campus') || '',
+    category: searchParams.get('category') || '',
+    difficulty: searchParams.get('difficulty') || '',
+    search: searchParams.get('search') || ''
   })
 
   useEffect(() => {
@@ -47,10 +48,10 @@ export default function Catalog() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-gray-900 dark:text-gray-100">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Course Catalog</h1>
-        <p className="text-gray-600 mt-2">Browse and enroll in courses</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Course Catalog</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">Browse and enroll in courses</p>
       </div>
 
       {/* Filters */}
@@ -88,9 +89,11 @@ export default function Catalog() {
                 onChange={(e) => handleFilterChange('category', e.target.value)}
               >
                 <option value="">All Categories</option>
-                <option value="Ministry">Ministry</option>
+                <option value="Bible Study">Bible Study</option>
                 <option value="Leadership">Leadership</option>
-                <option value="Outreach">Outreach</option>
+                <option value="Evangelism">Evangelism</option>
+                <option value="Worship">Worship</option>
+                <option value="Discipleship">Discipleship</option>
               </select>
             </div>
             <div>
@@ -116,8 +119,8 @@ export default function Catalog() {
           <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No courses found</h3>
-          <p className="mt-1 text-sm text-gray-500">Try adjusting your filters or check back later.</p>
+          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No courses found</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Try adjusting your filters or check back later.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

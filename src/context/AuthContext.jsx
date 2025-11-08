@@ -43,7 +43,8 @@ export function AuthProvider({ children }) {
       setUser(res.data)
       setRoles(res.data.roles || [])
     } catch (error) {
-      // If unauthorized, clear tokens and stop retrying
+      // If unauthorized, clear tokens
+      // The API interceptor will handle redirect to login
       if (error.response?.status === 401) {
         localStorage.removeItem('access')
         localStorage.removeItem('refresh')

@@ -18,8 +18,12 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo and brand */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2 group">
-              <Logo className="h-8 w-8 text-white group-hover:scale-110 transition-transform duration-200" />
+            <Link to="/" className="flex items-center group">
+              <Logo 
+                className="h-[68px] w-[68px] text-white group-hover:scale-110 transition-transform duration-200" 
+                useImage={true}
+                imageSrc="/logo.png"
+              />
               <span className="text-xl font-display font-bold text-white drop-shadow-lg">MinistryLearn</span>
             </Link>
           </div>
@@ -31,9 +35,12 @@ export default function Header() {
             </Link>
             {user && (
               <>
-                <Link to="/dashboard" className="text-white/90 hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                  Dashboard
-                </Link>
+                {/* Only show Dashboard for Learners */}
+                {!hasRole('Instructor') && !hasRole('Admin') && (
+                  <Link to="/dashboard" className="text-white/90 hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                    Dashboard
+                  </Link>
+                )}
                 {hasRole('Instructor') && (
                   <Link to="/instructor" className="text-white/90 hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200">
                     Instructor

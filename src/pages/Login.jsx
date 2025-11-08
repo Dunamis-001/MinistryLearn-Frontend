@@ -12,7 +12,7 @@ const schema = Yup.object({
 
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login, hasRole } = useAuth()
   const navigate = useNavigate()
   const [error, setError] = useState('')
 
@@ -20,8 +20,16 @@ export default function Login() {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       setError('')
-      await login(values.email, values.password)
-      navigate('/dashboard')
+      const result = await login(values.email, values.password)
+      // Redirect based on roles from login response
+      const userRoles = result.roles || []
+      if (userRoles.includes('Admin')) {
+        navigate('/admin')
+      } else if (userRoles.includes('Instructor')) {
+        navigate('/instructor')
+      } else {
+        navigate('/dashboard')
+      }
     } catch (err) {
       setError(err.message)
     } finally {
@@ -31,13 +39,13 @@ export default function Login() {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             Or{' '}
             <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
               create a new account

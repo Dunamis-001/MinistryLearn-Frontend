@@ -9,6 +9,7 @@ export default function CourseDetail() {
   const { user, hasRole } = useAuth()
   const [course, setCourse] = useState(null)
   const [enrollment, setEnrollment] = useState(null)
+  const [modules, setModules] = useState([])
   const [loading, setLoading] = useState(true)
   const [enrolling, setEnrolling] = useState(false)
 
@@ -20,12 +21,14 @@ export default function CourseDetail() {
 
   const loadCourseData = async () => {
     try {
-      const [courseRes, enrollmentRes] = await Promise.all([
+      const [courseRes, enrollmentRes, modulesRes] = await Promise.all([
         api.get(`/courses/${courseId}`),
-        user ? api.get('/enrollments').catch(() => ({ data: { items: [] } })) : Promise.resolve({ data: { items: [] } })
+        user ? api.get('/enrollments').catch(() => ({ data: { items: [] } })) : Promise.resolve({ data: { items: [] } }),
+        api.get(`/courses/${courseId}/modules`).catch(() => ({ data: [] }))
       ])
      
       setCourse(courseRes.data)
+      setModules(modulesRes.data || [])
      
       if (user) {
         const userEnrollment = enrollmentRes.data.items?.find(e => e.course_id == courseId)
@@ -87,7 +90,7 @@ export default function CourseDetail() {
           <Link to="/catalog" className="text-primary-600 hover:text-primary-500">
             ← Back to Catalog
           </Link>
-          {hasRole('Instructor') && (
+          {(hasRole('Admin') || hasRole('Instructor')) && (
             <Link to={`/courses/${courseId}/edit`} className="btn-secondary">
               Edit Course
             </Link>
@@ -113,7 +116,7 @@ export default function CourseDetail() {
               <span className="px-3 py-1 text-sm font-medium bg-gray-100 text-gray-800 rounded-full">
                 {course.category}
               </span>
-              <span className="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+              <span className="px-3 py-1 text-sm font-medium bg-primary-100 text-primary-800 rounded-full">
                 {course.campus}
               </span>
             </div>
@@ -131,39 +134,64 @@ export default function CourseDetail() {
                   />
                 )}
                
-                {enrollment ? (
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Your Progress</h3>
-                      <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                        <div
-                          className="bg-primary-600 h-2 rounded-full"
-                          style={{ width: `${enrollment.progress}%` }}
-                        ></div>
+                {/* Show enrollment options only for Learners */}
+                {!hasRole('Admin') && !hasRole('Instructor') ? (
+                  enrollment ? (
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Your Progress</h3>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
+                          <div
+                            className="bg-primary-600 h-2 rounded-full"
+                            style={{ width: `${enrollment.progress}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{enrollment.progress}% Complete</p>
                       </div>
-                      <p className="text-sm text-gray-600">{enrollment.progress}% Complete</p>
+                     
+                      <Link
+                        to={`/learn/${courseId}`}
+                        className="btn-primary w-full text-center"
+                      >
+                        {enrollment.status === 'completed' ? 'Review Course' : 'Continue Learning'}
+                      </Link>
                     </div>
-                   
+                  ) : (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Ready to start?</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Enroll in this course to begin your learning journey.
+                      </p>
+                      <button
+                        onClick={handleEnroll}
+                        disabled={enrolling}
+                        className="btn-primary w-full"
+                      >
+                        {enrolling ? 'Enrolling...' : 'Enroll Now'}
+                      </button>
+                    </div>
+                  )
+                ) : (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Course Management</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {hasRole('Admin') 
+                        ? 'As an admin, you can view and edit this course.'
+                        : 'As an instructor, you can view and edit this course. Changes require admin approval.'}
+                    </p>
                     <Link
                       to={`/learn/${courseId}`}
                       className="btn-primary w-full text-center"
                     >
-                      {enrollment.status === 'completed' ? 'Review Course' : 'Continue Learning'}
+                      View Course Content
                     </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Ready to start?</h3>
-                    <p className="text-sm text-gray-600">
-                      Enroll in this course to begin your learning journey.
-                    </p>
-                    <button
-                      onClick={handleEnroll}
-                      disabled={enrolling}
-                      className="btn-primary w-full"
-                    >
-                      {enrolling ? 'Enrolling...' : 'Enroll Now'}
-                    </button>
+                    {course.approved === false && (
+                      <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                          ⚠️ This course is pending approval
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -173,23 +201,67 @@ export default function CourseDetail() {
       </div>
 
 
+      {/* Course Modules and Lessons - Show for Instructors/Admins */}
+      {(hasRole('Admin') || hasRole('Instructor')) && modules.length > 0 && (
+        <div className="mb-8">
+          <div className="card">
+            <div className="card-header">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Course Structure</h2>
+            </div>
+            <div className="card-body">
+              <div className="space-y-6">
+                {modules.map((module, moduleIdx) => (
+                  <div key={module.id} className="border-l-4 border-primary-500 pl-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      Module {moduleIdx + 1}: {module.title}
+                    </h3>
+                    {module.lessons && module.lessons.length > 0 ? (
+                      <ul className="space-y-2 ml-4">
+                        {module.lessons.map((lesson, lessonIdx) => (
+                          <li key={lesson.id} className="text-gray-700 dark:text-gray-300">
+                            <Link
+                              to={`/learn/${courseId}`}
+                              className="hover:text-primary-600 dark:hover:text-primary-400 hover:underline"
+                            >
+                              Lesson {lessonIdx + 1}: {lesson.title}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 ml-4">No lessons yet</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <Link
+                  to={`/learn/${courseId}`}
+                  className="btn-primary inline-flex items-center"
+                >
+                  View All Lessons →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Course Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="card">
             <div className="card-header">
-              <h2 className="text-xl font-semibold text-gray-900">Course Overview</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Course Overview</h2>
             </div>
             <div className="card-body">
               <div className="prose max-w-none">
-                <p className="text-gray-700">
-                  This course provides comprehensive training in ministry fundamentals.
-                  You'll learn essential concepts, practical applications, and best practices
-                  for effective ministry work.
+                <p className="text-gray-700 dark:text-gray-300">
+                  {course.description || "This course provides comprehensive training in ministry fundamentals. You'll learn essential concepts, practical applications, and best practices for effective ministry work."}
                 </p>
                
-                <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-4">What you'll learn:</h3>
-                <ul className="list-disc list-inside text-gray-700 space-y-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6 mb-4">What you'll learn:</h3>
+                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
                   <li>Core ministry principles and values</li>
                   <li>Effective communication strategies</li>
                   <li>Building relationships and community</li>
@@ -198,8 +270,8 @@ export default function CourseDetail() {
                 </ul>
 
 
-                <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-4">Course Requirements:</h3>
-                <ul className="list-disc list-inside text-gray-700 space-y-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6 mb-4">Course Requirements:</h3>
+                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
                   <li>Basic understanding of ministry concepts</li>
                   <li>Commitment to complete all modules</li>
                   <li>Active participation in discussions</li>

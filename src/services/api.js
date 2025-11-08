@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://ministrylearn-backend-2.onrender.com/api'
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 });
 
 // Request interceptor to add auth token
@@ -19,7 +19,19 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
+    // Handle 401 errors (unauthorized)
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Don't retry refresh token endpoint if it fails
+      if (originalRequest.url?.includes('/auth/refresh')) {
+        localStorage.removeItem('access')
+        localStorage.removeItem('refresh')
+        // Redirect to login if we're not already there
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+          window.location.href = '/login'
+        }
+        return Promise.reject(error)
+      }
+
       originalRequest._retry = true
 
       const refreshToken = localStorage.getItem('refresh')
@@ -36,15 +48,23 @@ api.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
           return api(originalRequest)
         } catch (refreshError) {
-          // Refresh failed, clear tokens but don't redirect automatically
+          // Refresh failed (token expired or invalid)
           localStorage.removeItem('access')
           localStorage.removeItem('refresh')
+          
+          // Redirect to login if we're not already there
+          if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+            window.location.href = '/login'
+          }
           return Promise.reject(error)
         }
       } else {
-        // No refresh token, clear tokens but don't redirect automatically
+        // No refresh token, clear tokens and redirect to login
         localStorage.removeItem('access')
         localStorage.removeItem('refresh')
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+          window.location.href = '/login'
+        }
         return Promise.reject(error)
       }
     }
